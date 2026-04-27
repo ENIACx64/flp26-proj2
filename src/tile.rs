@@ -45,7 +45,21 @@ impl Tile {
     /// method does not know the position. `DungeonMap::parse` is responsible
     /// for injecting the correct position into the error before returning it.
     pub fn from_char(c: char) -> Result<Tile, ParseError> {
-        todo!()
+        match c {
+            '#' => Ok(Tile::Wall),
+            '.' => Ok(Tile::Floor),
+            '@' => Ok(Tile::PlayerStart),
+            'E' => Ok(Tile::Enemy),
+            'T' => Ok(Tile::Treasure),
+            'X' => Ok(Tile::Exit),
+            '+' => Ok(Tile::Door),
+            '^' => Ok(Tile::Trap),
+            _   => Err(ParseError::UnknownTile {
+                c,
+                row: 0,
+                col: 0,
+            })
+        }
     }
 
     /// Returns `true` if this tile type allows movement through it.
@@ -53,7 +67,10 @@ impl Tile {
     /// Every tile except `Wall` is passable. This method is used by the
     /// flood-fill algorithm in `analysis::reachable_floor_size`.
     pub fn is_passable(&self) -> bool {
-        todo!()
+        match self {
+            Tile::Wall => false,
+            _          => true,
+        }
     }
 }
 
