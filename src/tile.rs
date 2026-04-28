@@ -67,9 +67,7 @@ impl Tile {
     /// Every tile except `Wall` is passable. This method is used by the
     /// flood-fill algorithm in `analysis::reachable_floor_size`.
     pub fn is_passable(&self) -> bool {
-        match self {
-            Tile::Wall => false,
-            _          => true,
+        !matches!(self, Tile::Wall)
         }
     }
 }

@@ -55,7 +55,65 @@ impl DungeonMap {
     /// This pattern propagates errors naturally while building the
     /// `Vec<Vec<Tile>>`.
     pub fn parse(input: &str) -> Result<DungeonMap, ParseError> {
-        todo!()
+        // If input is empty or only contains empty lines, return Err(ParseError::EmptyInput)
+        if input.lines().all(|line| line.trim().is_empty()) {
+            return Err(ParseError::EmptyInput);
+        }
+        // Initializes important variables
+        let mut tiles: Vec<Vec<Tile>> = Vec::new();
+        let mut expected_width: Option<usize> = None;
+        // Iterates through each line
+        for (row_idx, row) in input.lines().enumerate() {
+            // Strips trailing '\r' if present
+            let row = row.trim_end_matches('\r');
+            // Initializes a new row of tiles
+            let mut row_tiles: Vec<Tile> = Vec::new();
+            // Parses each character in the line into a Tile, collecting into a Vec<Tile>
+            for (col_idx, c) in row.chars().enumerate() {
+                match Tile::from_char(c) {
+                    Ok(tile) => row_tiles.push(tile),
+                    Err(ParseError::UnknownTile {c, ..}) => {
+                        return Err(ParseError::UnknownTile {
+                            c,
+                            row: row_idx,
+                            col: col_idx,
+                        });
+                    }
+                    Err(e) => return Err(e),
+                }
+            }
+            let row_width = row_tiles.len();
+            // Checks the row width and compares it to the expected width
+            match (expected_width) {
+                None => {
+                    expected_width = Some(row_width);
+                }
+                Some(width) => {
+                    if row_width != width {
+                        return Err(ParseError::JaggedMap {
+                            row: row_idx,
+                            col: col_idx,
+                            row_width,
+                        });
+                    }
+                }
+            }
+            // Pushes the row into the vector of vectors
+            tiles.push(row_tiles);
+        }
+        // Calulcates the "height" (number of vectors in the outer vector)
+        let height = tiles.len();
+        // Calculates the width or throws an error if the input is empty
+        let width = match expected_width {
+            Some(width) => width,
+            None => Err(ParseError::EmptyInput),
+        };
+        // Returns the parsed map
+        Ok(DungeonMap {
+            tiles,
+            width,
+            height,
+        })
     }
 
     // ── Accessors ─────────────────────────────────────────────────────────────
