@@ -5,6 +5,9 @@
 // ============================================================
 
 use crate::model::DungeonMap;
+use crate::tile::Tile;
+use crate::error::ValidationError;
+use crate::analysis::reachable_floor_size;
 
 /// Generates a human-readable summary report for the given map.
 ///
@@ -56,13 +59,18 @@ use crate::model::DungeonMap;
 pub fn generate_report(map: &DungeonMap) -> String {
     // Definition of important variables
     let mut report = String::new();
-    let counts = self.count_tiles();
-    let validation = self.validate();
-    let starts = self.find_all(Tile::PlayerStart);
-    let reachable = reachable_floor_size(map, start);
+    let counts = map.count_tiles();
+    let validation = map.validate();
+    let starts = map.find_all(Tile::PlayerStart);
+    // If there are multiple starts, select the first one
+    let reachable = if let Some(&start) = starts.first() {
+        reachable_floor_size(map, start)
+    } else {
+        0
+    };
     // Beginning of the report
     report.push_str("=== Dungeon Report ===\n");
-    report.push_str("Dimensions: {} x {}\n", map.width, map.height);
+    report.push_str(&format!("Dimensions: {} x {}\n", map.width(), map.height()));
     report.push_str("Tiles:\n");
     // Tiles for counts
     let tiles_for_counts = [
@@ -78,7 +86,7 @@ pub fn generate_report(map: &DungeonMap) -> String {
     // Checks count for each tile variant and pushes if >0
     for tile in tiles_for_counts {
         if let Some(count) = counts.get(&tile) {
-            report.push_str(&format!("@{:?}: {:>4}\n"));
+            report.push_str(&format!("  {:13}{:>4}\n", format!("{:?}:", tile), count));
         }
     }
     // Checks if validation is successful
@@ -94,7 +102,7 @@ pub fn generate_report(map: &DungeonMap) -> String {
                     ValidationError::MissingPlayerStart => {
                         report.push_str("  - Missing PlayerStart tile\n");
                     }
-                    ValidationError::MultiplePlayerStarts => {
+                    ValidationError::MultiplePlayerStarts(_pos) => {
                         report.push_str("  - Multiple PlayerStart tiles\n");
                     }
                     ValidationError::NoExit => {

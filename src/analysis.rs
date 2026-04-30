@@ -6,6 +6,7 @@
 // ============================================================
 
 use crate::model::{DungeonMap, Position};
+use std::collections::HashSet;
 
 /// Returns the number of passable tiles reachable from `start` via
 /// 4-directional movement (up, down, left, right), without crossing walls.
@@ -44,7 +45,7 @@ pub fn reachable_floor_size(map: &DungeonMap, start: Position) -> usize {
         return 0;
     }
     // Declares queues for Depth-First Search
-    let mut frontier: Vec<Position = Vec::new();
+    let mut frontier: Vec<Position> = Vec::new();
     let mut visited: HashSet<Position> = HashSet::new();
     // Pushes start to the beginning of both queues
     frontier.push(start);
@@ -54,9 +55,9 @@ pub fn reachable_floor_size(map: &DungeonMap, start: Position) -> usize {
         // Expands the front of the frontier queue
         let neighbors =  [
             if row > 0 { Some((row - 1, col)) } else { None },
-            Some(row + 1, col),
+            Some((row + 1, col)),
             if col > 0 { Some((row, col - 1)) } else { None },
-            Some(row, col + 1),
+            Some((row, col + 1)),
         ];
         // Checks neighbors and adds them to both queues if possible
         for neighbor in neighbors {
@@ -82,7 +83,7 @@ pub fn reachable_floor_size(map: &DungeonMap, start: Position) -> usize {
         }
     }
     // Returns count of visited tiles (reachable from the start)
-    visited.len();
+    visited.len()
 }
 
 // ── Unit tests ────────────────────────────────────────────────────────────────

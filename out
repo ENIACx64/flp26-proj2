@@ -1,0 +1,12 @@
+=== Dungeon Report ===
+Dimensions: 10 x 8
+Tiles:
+  Wall:          45
+  Floor:         28
+  PlayerStart:    1
+  Enemy:          3
+  Treasure:       2
+  Exit:           1
+Validation: OK
+Reachable floor from player: 35
+

@@ -84,7 +84,7 @@ impl DungeonMap {
             }
             let row_width = row_tiles.len();
             // Checks the row width and compares it to the expected width
-            match (expected_width) {
+            match expected_width {
                 None => {
                     expected_width = Some(row_width);
                 }
@@ -92,8 +92,8 @@ impl DungeonMap {
                     if row_width != width {
                         return Err(ParseError::JaggedMap {
                             row: row_idx,
-                            col: col_idx,
-                            row_width,
+                            expected: width,
+                            found: row_width,
                         });
                     }
                 }
@@ -106,7 +106,7 @@ impl DungeonMap {
         // Calculates the width or throws an error if the input is empty
         let width = match expected_width {
             Some(width) => width,
-            None => Err(ParseError::EmptyInput),
+            None => return Err(ParseError::EmptyInput),
         };
         // Returns the parsed map
         Ok(DungeonMap {
@@ -161,16 +161,16 @@ impl DungeonMap {
     /// over every tile in the map.
     pub fn count_tiles(&self) -> HashMap<Tile, usize> {
         // Initializes the hash map
-        let mut tileCounts: HashMap<Tile, usize> = HashMap::new();
+        let mut tile_counts: HashMap<Tile, usize> = HashMap::new();
         // Iterates through all tiles and counts them by their variant
         for tile in self.rows().flat_map(|row| row.iter()) {
             // Searches for the tile variant in the hash map and inserts it if needed
-            let counter = tileCounts.entry(*tile).or_insert(0);
+            let counter = tile_counts.entry(*tile).or_insert(0);
             // Dereferences the counter and increments it
             *counter += 1;
         }
         // Returns the hash map
-        counts
+        tile_counts
     }
 
     /// Returns all positions where `tile` appears, sorted row-first then
@@ -178,17 +178,17 @@ impl DungeonMap {
     ///
     /// Returns an empty `Vec` if the tile does not appear in the map.
     pub fn find_all(&self, tile: Tile) -> Vec<Position> {
-        let mut foundTiles: Vec::new();
+        let mut found_tiles = Vec::new();
         // Iterates through each tile in the map
         for (row_idx, row) in self.rows().enumerate() {
             for (col_idx, col) in row.iter().enumerate() {
                 if *col == tile {
-                    foundTiles.push((row_idx, col_idx));
+                    found_tiles.push((row_idx, col_idx));
                 }
             }
         }
         // Returns the vector
-        foundTiles
+        found_tiles
     }
 
     // ── Validation ────────────────────────────────────────────────────────────
@@ -233,10 +233,10 @@ impl DungeonMap {
         }
         // Returns Ok if ok, otherwise returns errors
         if errors.is_empty() {
-            Ok(());
+            Ok(())
         }
         else {
-            Err(errors);
+            Err(errors)
         }
     }
 }

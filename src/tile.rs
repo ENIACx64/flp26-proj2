@@ -68,7 +68,6 @@ impl Tile {
     /// flood-fill algorithm in `analysis::reachable_floor_size`.
     pub fn is_passable(&self) -> bool {
         !matches!(self, Tile::Wall)
-        }
     }
 }
 
