@@ -210,7 +210,34 @@ impl DungeonMap {
     /// Build a `Vec<ValidationError>`, push to it for each failing condition,
     /// and return `Err(errors)` at the end if it is non-empty.
     pub fn validate(&self) -> Result<(), Vec<ValidationError>> {
-        todo!()
+        // Initializing all important vectors
+        let mut errors: Vec<ValidationError> = Vec::new();
+        let found_starts = self.find_all(Tile::PlayerStart);
+        let found_exits = self.find_all(Tile::Exit);
+        let found_floors = self.find_all(Tile::Floor);
+        // If no start
+        if found_starts.is_empty() {
+            errors.push(ValidationError::MissingPlayerStart);
+        }
+        // If multiple starts
+        if found_starts.len() > 1 {
+            errors.push(ValidationError::MultiplePlayerStarts(found_starts));
+        }
+        // If no exit
+        if found_exits.is_empty() {
+            errors.push(ValidationError::NoExit);
+        }
+        // If no floor
+        if found_floors.is_empty() {
+            errors.push(ValidationError::NoFloor);
+        }
+        // Returns Ok if ok, otherwise returns errors
+        if errors.is_empty() {
+            Ok(());
+        }
+        else {
+            Err(errors);
+        }
     }
 }
 
