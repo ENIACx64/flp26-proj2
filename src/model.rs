@@ -145,9 +145,7 @@ impl DungeonMap {
     /// Note: returning `impl Iterator` from a method requires understanding
     /// that the iterator borrows from `&self`.
     pub fn rows(&self) -> impl Iterator<Item = &Vec<Tile>> {
-        // Replace this body with your implementation.
-        // std::iter::empty() is here only so the skeleton compiles.
-        std::iter::empty()
+        self.tiles.iter()
     }
 
     // ── Analysis ──────────────────────────────────────────────────────────────
@@ -162,7 +160,17 @@ impl DungeonMap {
     /// `self.rows().flat_map(|row| row.iter())` gives you a flat iterator
     /// over every tile in the map.
     pub fn count_tiles(&self) -> HashMap<Tile, usize> {
-        todo!()
+        // Initializes the hash map
+        let mut tileCounts: HashMap<Tile, usize> = HashMap::new();
+        // Iterates through all tiles and counts them by their variant
+        for tile in self.rows().flat_map(|row| row.iter()) {
+            // Searches for the tile variant in the hash map and inserts it if needed
+            let counter = tileCounts.entry(*tile).or_insert(0);
+            // Dereferences the counter and increments it
+            *counter += 1;
+        }
+        // Returns the hash map
+        counts
     }
 
     /// Returns all positions where `tile` appears, sorted row-first then
