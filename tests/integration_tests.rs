@@ -73,7 +73,11 @@ fn parse_jagged_map_returns_error() {
     let input = "###\n##\n###";
     assert_eq!(
         DungeonMap::parse(input),
-        Err(ParseError::JaggedMap { row: 1, expected: 3, found: 2 })
+        Err(ParseError::JaggedMap {
+            row: 1,
+            expected: 3,
+            found: 2
+        })
     );
 }
 
@@ -82,7 +86,11 @@ fn parse_unknown_tile_carries_position() {
     let input = "###\n#?#\n###";
     assert_eq!(
         DungeonMap::parse(input),
-        Err(ParseError::UnknownTile { c: '?', row: 1, col: 1 })
+        Err(ParseError::UnknownTile {
+            c: '?',
+            row: 1,
+            col: 1
+        })
     );
 }
 

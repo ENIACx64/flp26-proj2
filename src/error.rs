@@ -42,7 +42,11 @@ impl fmt::Display for ParseError {
             ParseError::EmptyInput => {
                 write!(f, "map input is empty")
             }
-            ParseError::JaggedMap { row, expected, found } => {
+            ParseError::JaggedMap {
+                row,
+                expected,
+                found,
+            } => {
                 write!(
                     f,
                     "row {} has width {} but expected {} (from row 0)",

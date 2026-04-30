@@ -54,11 +54,7 @@ impl Tile {
             'X' => Ok(Tile::Exit),
             '+' => Ok(Tile::Door),
             '^' => Ok(Tile::Trap),
-            _   => Err(ParseError::UnknownTile {
-                c,
-                row: 0,
-                col: 0,
-            })
+            _ => Err(ParseError::UnknownTile { c, row: 0, col: 0 }),
         }
     }
 

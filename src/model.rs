@@ -72,7 +72,7 @@ impl DungeonMap {
             for (col_idx, c) in row.chars().enumerate() {
                 match Tile::from_char(c) {
                     Ok(tile) => row_tiles.push(tile),
-                    Err(ParseError::UnknownTile {c, ..}) => {
+                    Err(ParseError::UnknownTile { c, .. }) => {
                         return Err(ParseError::UnknownTile {
                             c,
                             row: row_idx,
@@ -234,8 +234,7 @@ impl DungeonMap {
         // Returns Ok if ok, otherwise returns errors
         if errors.is_empty() {
             Ok(())
-        }
-        else {
+        } else {
             Err(errors)
         }
     }

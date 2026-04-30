@@ -53,7 +53,7 @@ pub fn reachable_floor_size(map: &DungeonMap, start: Position) -> usize {
     // Initiates the DFS algorithm
     while let Some((row, col)) = frontier.pop() {
         // Expands the front of the frontier queue
-        let neighbors =  [
+        let neighbors = [
             if row > 0 { Some((row - 1, col)) } else { None },
             Some((row + 1, col)),
             if col > 0 { Some((row, col - 1)) } else { None },

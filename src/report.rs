@@ -4,10 +4,9 @@
 // You must implement the function body below.
 // ============================================================
 
+use crate::analysis::reachable_floor_size;
 use crate::model::DungeonMap;
 use crate::tile::Tile;
-use crate::error::ValidationError;
-use crate::analysis::reachable_floor_size;
 
 /// Generates a human-readable summary report for the given map.
 ///
@@ -98,25 +97,12 @@ pub fn generate_report(map: &DungeonMap) -> String {
             report.push_str("Validation: FAILED\n");
             // Writes one line per error
             for err in errors {
-                match err {
-                    ValidationError::MissingPlayerStart => {
-                        report.push_str("  - Missing PlayerStart tile\n");
-                    }
-                    ValidationError::MultiplePlayerStarts(_pos) => {
-                        report.push_str("  - Multiple PlayerStart tiles\n");
-                    }
-                    ValidationError::NoExit => {
-                        report.push_str("  - No Exit tiles\n");
-                    }
-                    ValidationError::NoFloor => {
-                        report.push_str("  - No Floor tiles\n");
-                    }
-                }
+                report.push_str(&format!("  - {}\n", err));
             }
         }
     }
     // Pushes reachable tiles
-    report.push_str(&format!("Reachable floor from player: {}\n", reachable));
+    report.push_str(&format!("Reachable floor from player: {}", reachable));
     // Prints the report
     report
 }
