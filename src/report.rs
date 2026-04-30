@@ -54,7 +54,63 @@ use crate::model::DungeonMap;
 /// `"PlayerStart:"` is the longest label (12 chars + `:`). Pad all labels
 /// to the same width for alignment.
 pub fn generate_report(map: &DungeonMap) -> String {
-    todo!()
+    // Definition of important variables
+    let mut report = String::new();
+    let counts = self.count_tiles();
+    let validation = self.validate();
+    let starts = self.find_all(Tile::PlayerStart);
+    let reachable = reachable_floor_size(map, start);
+    // Beginning of the report
+    report.push_str("=== Dungeon Report ===\n");
+    report.push_str("Dimensions: {} x {}\n", map.width, map.height);
+    report.push_str("Tiles:\n");
+    // Tiles for counts
+    let tiles_for_counts = [
+        Tile::Wall,
+        Tile::Floor,
+        Tile::PlayerStart,
+        Tile::Enemy,
+        Tile::Treasure,
+        Tile::Exit,
+        Tile::Door,
+        Tile::Trap,
+    ];
+    // Checks count for each tile variant and pushes if >0
+    for tile in tiles_for_counts {
+        if let Some(count) = counts.get(&tile) {
+            report.push_str(&format!("@{:?}: {:>4}\n"));
+        }
+    }
+    // Checks if validation is successful
+    match validation {
+        Ok(()) => {
+            report.push_str("Validation: OK\n");
+        }
+        Err(errors) => {
+            report.push_str("Validation: FAILED\n");
+            // Writes one line per error
+            for err in errors {
+                match err {
+                    ValidationError::MissingPlayerStart => {
+                        report.push_str("  - Missing PlayerStart tile\n");
+                    }
+                    ValidationError::MultiplePlayerStarts => {
+                        report.push_str("  - Multiple PlayerStart tiles\n");
+                    }
+                    ValidationError::NoExit => {
+                        report.push_str("  - No Exit tiles\n");
+                    }
+                    ValidationError::NoFloor => {
+                        report.push_str("  - No Floor tiles\n");
+                    }
+                }
+            }
+        }
+    }
+    // Pushes reachable tiles
+    report.push_str(&format!("Reachable floor from player: {}\n", reachable));
+    // Prints the report
+    report
 }
 
 // ── Unit tests ────────────────────────────────────────────────────────────────
