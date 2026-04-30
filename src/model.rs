@@ -178,7 +178,17 @@ impl DungeonMap {
     ///
     /// Returns an empty `Vec` if the tile does not appear in the map.
     pub fn find_all(&self, tile: Tile) -> Vec<Position> {
-        todo!()
+        let mut foundTiles: Vec::new();
+        // Iterates through each tile in the map
+        for (row_idx, row) in self.rows().enumerate() {
+            for (col_idx, col) in row.iter().enumerate() {
+                if *col == tile {
+                    foundTiles.push((row_idx, col_idx));
+                }
+            }
+        }
+        // Returns the vector
+        foundTiles
     }
 
     // ── Validation ────────────────────────────────────────────────────────────
